@@ -23,7 +23,7 @@ def test_create_people():
 	response_ron = client.post("/people", json={
 			"id": "Ron",
   			"topics": [
-    		"Hermiona", "food"
+    		
   			]
 		}
 	)

@@ -5,7 +5,7 @@ def common_topics(person, topics):
 
 def bfs_of_receivers(network, topics, from_person_id, min_trust_level):
 	receivers = {} # from_person: [to_persons]
-	visited = {} #1-visited node, 0-didnt
+	visited = {} #true-visited node, false-didnt
 	queue = deque() #nodes to visit
 	for id in network:
 		visited[id]=False
@@ -17,9 +17,7 @@ def bfs_of_receivers(network, topics, from_person_id, min_trust_level):
 		for connection in network[curr_id].connections.items():
 			connection_id = connection[0]
 			trust_level = connection[1]
-			if visited[connection_id]: #avoiding spamming
-				continue
-			if trust_level >= min_trust_level and common_topics(network[connection_id], topics):	
+			if not visited[connection_id] and trust_level >= min_trust_level and common_topics(network[connection_id], topics):	
 				if curr_id not in receivers:
 					receivers[curr_id] = []
 				receivers[curr_id].append(connection_id)

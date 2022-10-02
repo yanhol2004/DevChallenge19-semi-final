@@ -31,7 +31,7 @@ async def add_trust_connections(connections: dict, person_id: str = Path(..., ti
 		if not network.__contains__(connection_id):
 			raise HTTPException(status_code=422, detail="Cannot establish connection with non existent person")
 			return
-		if connection_trust > 10 or connection_trust < 0:
+		if connection_trust > 10 or connection_trust < 1:
 			raise HTTPException(status_code=422, detail="Invalid trust level value")
 		network[person_id].connections[connection_id] = connection_trust
 
