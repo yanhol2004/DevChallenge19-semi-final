@@ -1,24 +1,36 @@
-from fastapi import APIRouter, Path
-from model import Characteristic, Person, Connection
+from fastapi import APIRouter, Path, HTTPException, status
+from model import Person_char, Person
 
 router = APIRouter()
 
 network = {}
 
-@router.post("/people")
-async def add_person(characteristic: Characteristic) -> dict:
-	person = Person(characteristic=characteristic)
-	network[person.characteristic.id] = person
+@router.post("/people", status_code=201)
+async def add_person(characteristic: Person_char) -> dict:
+	if network.__contains__(characteristic.id):
+		raise HTTPException(status_code=422, detail="Such a person already exists")
+		return
+	person = Person(topics = characteristic.topics)
+	network[characteristic.id] = person
 	return characteristic.dict()
 
-@router.get("/people") 
+@router.get("/people", status_code=201) 
 async def show_network() -> dict:
 	return {"network": network}
 
 
-@router.post("/people/{person_id}/trust_connections")
+@router.post("/people/{person_id}/trust_connections",status_code=201)
 async def add_trust_connections(connections: dict, person_id: str = Path(..., title="The ID of the given person."), ):
+	if not network.__contains__(person_id):
+		raise HTTPException(status_code=404, detail="Person with provided ID does not exist")
+		return
 	for item in connections.items():
-		temp = Connection(id=item[0], trustLevel=item[1])
-		network[person_id].connections.append(temp)
+		connection_id = item[0]
+		connection_trust = item[1]
+		if not network.__contains__(connection_id):
+			raise HTTPException(status_code=422, detail="Cannot establish connection with non existent person")
+			return
+		if connection_trust > 10 or connection_trust < 0:
+			raise HTTPException(status_code=422, detail="Invalid trust level value")
+		network[person_id].connections[connection_id] = connection_trust
 
