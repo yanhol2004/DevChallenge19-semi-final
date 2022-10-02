@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Path, HTTPException, status
-from model import Person_char, Person
+from model import Person_char, Person, Message
+from bfs import bfs_of_receivers
 
 router = APIRouter()
 
@@ -34,3 +35,6 @@ async def add_trust_connections(connections: dict, person_id: str = Path(..., ti
 			raise HTTPException(status_code=422, detail="Invalid trust level value")
 		network[person_id].connections[connection_id] = connection_trust
 
+@router.post("/messages", status_code=201)
+async def send_message(message: Message) -> dict:
+	return bfs_of_receivers(network, message.topics, message.from_person_id, message.min_trust_level)

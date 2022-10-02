@@ -7,3 +7,9 @@ class Person_char(BaseModel):
 class Person(BaseModel):
 	topics: list[str]
 	connections = {}
+
+class Message(BaseModel):
+	text: str
+	topics: list[str]
+	from_person_id: str
+	min_trust_level: int
