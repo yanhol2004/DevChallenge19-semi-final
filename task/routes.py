@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path, HTTPException, status
 from model import Person_char, Person, Message
-from bfs import bfs_of_receivers
+from bfs import bfs_of_receivers, bfs_shortest_path
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ async def add_person(characteristic: Person_char) -> dict:
 	network[characteristic.id] = person
 	return characteristic.dict()
 
-@router.get("/people", status_code=201) 
+@router.get("/people", status_code=201)
 async def show_network() -> dict:
 	return {"network": network}
 
@@ -38,3 +38,9 @@ async def add_trust_connections(connections: dict, person_id: str = Path(..., ti
 @router.post("/messages", status_code=201)
 async def send_message(message: Message) -> dict:
 	return bfs_of_receivers(network, message.topics, message.from_person_id, message.min_trust_level)
+
+@router.post("/path", status_code=201)
+async def find_shortest_path(message: Message) -> dict:
+	return {"from": message.from_person_id,
+			"path": bfs_shortest_path(network, message.topics, message.from_person_id, message.min_trust_level)
+			}
