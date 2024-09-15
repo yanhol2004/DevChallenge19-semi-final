@@ -8,11 +8,6 @@ To start the service in the directory with the docker-compose file, execute the 
   ```
   docker-compose up
   ```
-## How to run the tests
-    1. Run docker-compose up
-    2. Open the docker container Terminal Console
-    3. Run "pytest" command
-    
 ## Implementation comments
 - Endpoints "/api/people" and "/api/{id}/trust_connections" are implemented straightforwardly, just writing data
 into dictionary "network", where all persons' attributes are stored as a value, and person id is a key.
