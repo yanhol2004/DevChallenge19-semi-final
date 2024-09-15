@@ -3,6 +3,12 @@ This repository contains my submission for the DevChallenge semi-final round, wh
 
 Below are the instructions to run the code, along with an explanation of my algorithm and the reasoning behind specific design choices.
 
+## Short summary of the task
+The task was to develop a REST API for a trust network, where people can assign trust levels to each other based on shared expertise topics. The API allows creating and updating trust connections between people and facilitates sending messages. Messages are delivered based on trust levels and shared expertise topics. There are two types of message delivery: broadcast, where messages are sent to all contacts, and non-broadcast, where messages follow a path through trusted individuals to a final recipient with the required expertise. Responses track the message delivery path.
+
+## Short explanation of the solution
+I implemented the solution using following libraries: FastAPI, uvicorn for the server, and Pydantic for data validation. The API manages people and trust connections stored in a dictionary, with expertise topics stored in sets for fast lookups. For message delivery, I used a breadth-first search (BFS) algorithm with a deque for optimal performance, ensuring O(V + E) complexity. In the /api/path endpoint, BFS is used to find the shortest path to a recipient based on trust levels. Tests were written using pytest to ensure correct functionality.
+
 ## How to run application
 To start the service in the directory with the docker-compose file, execute the terminal command 
   ```
