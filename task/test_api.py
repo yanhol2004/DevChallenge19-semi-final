@@ -15,7 +15,7 @@ def test_create_people():
 	response_hermiona = client.post("api/people", json={
 			"id": "Hermiona",
   			"topics": [
-    		"magic", "books"
+    		"magic"
   			]
 		}
 	)
@@ -50,41 +50,27 @@ def test_create_people():
 
 def test_create_connections():
 	response_garry = client.post("api/people/Garry/trust_connections", json={
-			"Hermiona": 10,
-			"Ron":10,
-			"Snape":6,
-			"Voldemort":1
+			"Hermiona": 6,
+			"Ron":7,
+			"Snape":1,
 		}
 	)
 
 	response_hermiona = client.post("api/people/Hermiona/trust_connections", json={
-			"Garry": 10,
-			"Ron":10,
-			"Snape":4,
-			"Voldemort":1
+			"Snape":4
 		}
 	)
 
 	response_ron = client.post("api/people/Ron/trust_connections", json={
-			"Garry": 10,
-			"Hermiona":10,
-			"Snape":4,
-			"Voldemort":1
-		}
-	)
-
-	response_snape = client.post("api/people/Snape/trust_connections", json={
-			"Garry": 6,
-			"Hermiona":6,
-			"Ron":4,
 			"Voldemort":10
 		}
 	)
 
+	response_snape = client.post("api/people/Snape/trust_connections", json={
+		}
+	)
+
 	response_voldemort = client.post("api/people/Voldemort/trust_connections", json={
-			"Garry": 3,
-			"Hermiona":3,
-			"Ron":4,
 			"Snape":10
 		}
 	)
@@ -106,8 +92,9 @@ def test_message():
 	)
 	assert response_message.status_code == 201
 	assert response_message.json() == {
-		"Garry": ["Hermiona", "Ron", "Snape"],
-		"Snape": ["Voldemort"]
+		"Garry": ["Hermiona", "Ron"],
+        "Ron": ["Voldemort"],
+		"Voldemort": ["Snape"]
 	}
 
 def test_path():
@@ -115,7 +102,23 @@ def test_path():
 		{
 			"text": "Voldemort is alive",
 			"topics": [
-			    "magic"
+			    "books"
+			],
+			"from_person_id": "Garry",
+			"min_trust_level": 5
+		}
+	)
+
+	assert response_path.json() == {
+		"from": "Garry",
+		"path": ["Ron", "Voldemort", "Snape"]
+	}
+
+def test_path2():
+	response_path = client.post("api/path", json=
+		{
+			"text": "Voldemort is alive",
+			"topics": [
 			],
 			"from_person_id": "Garry",
 			"min_trust_level": 5
@@ -125,7 +128,22 @@ def test_path():
 	assert response_path.json() == {
 		"from": "Garry",
 		"path": ["Hermiona"]
-	} or response_path.json() == {
-		"from": "Garry",
-		"path": ["Snape"]
+	} or response_path == {
+        "from": "Garry",
+        "path": ["Ron"]
+    }
+
+def test_path3():
+    response_path = client.post("api/path", json=
+		{
+			"text": "Voldemort is alive",
+			"topics": [
+			],
+			"from_person_id": "Snape",
+			"min_trust_level": 1
+		}
+	)
+    assert response_path.json() == {
+		"from": "Snape",
+		"path": []
 	}
